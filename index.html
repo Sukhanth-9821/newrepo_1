@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GitHub Gists Viewer</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 30px; }
+  input, button { padding: 8px; font-size: 16px; }
+  ul { margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<h2>CodeExperts GitHub Gists Viewer</h2>
+
+<label for="username">Enter GitHub username:</label>
+<input type="text" id="username" placeholder="username" />
+<button onclick="fetchGists()">Submit</button>
+
+<ul id="gist-list"></ul>
+
+<script>
+async function fetchGists() {
+    const username = document.getElementById('username').value;
+    const list = document.getElementById('gist-list');
+    list.innerHTML = '';
+
+    if (!username) return alert('Please enter a username');
+
+    try {
+        const res = await fetch(`/gists/${username}`);
+        if (!res.ok) {
+            const data = await res.json();
+            return list.innerHTML = `<li style="color:red;">${data.detail}</li>`;
+        }
+
+        const gists = await res.json();
+
+        if (gists.length === 0) {
+            list.innerHTML = '<li>No gists found for this user</li>';
+        } else {
+            gists.forEach(g => {
+                const item = document.createElement('li');
+                item.innerHTML = `<a href="${g.url}" target="_blank">${g.description || 'No description'}</a>`;
+                list.appendChild(item);
+            });
+        }
+
+    } catch (err) {
+        list.innerHTML = `<li style="color:red;">Error: ${err.message}</li>`;
+    }
+}
+</script>
+
+</body>
+</html>
