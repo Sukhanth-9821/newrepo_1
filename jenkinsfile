@@ -4,7 +4,7 @@ pipeline{
     stages{
         stage ("git checkout"){
             steps{
-                git branch: 'newbranch', url: 'https://github.com/Sukhanth-9821/gistrepo.git'
+                git branch: 'newbranch', url: 'https://github.com/Sukhanth-9821/newrepo_1.git'
             }
         }
         stage("Build"){
