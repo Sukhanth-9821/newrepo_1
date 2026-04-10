@@ -55,7 +55,7 @@ async def test_user_not_found(monkeypatch):
         await get_gituser_gist("wronguser")
         
     assert exc.value.status_code == 404
-    assert "error: GitHub API " in str(exc.value)
+    assert "404: GitHub API error: 404" in str(exc.value)
 
 # NETWORK ERROR
 @pytest.mark.asyncio
