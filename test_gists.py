@@ -1,6 +1,7 @@
 import pytest
 import httpx
 from gist import get_gituser_gist
+from fastapi import HTTPException
 
 
 class MockClient:
@@ -50,7 +51,7 @@ async def test_user_not_found(monkeypatch):
     response = httpx.Response(status_code=404, request=request)
     exception = httpx.HTTPStatusError("Not found", request=request, response=response)
     monkeypatch.setattr(httpx,"AsyncClient",lambda *args, **kwargs: MockClient(exception=exception))
-    with pytest.raises(RuntimeError) as exc:
+    with pytest.raises(HTTPException) as exc:
         await get_gituser_gist("wronguser")
     assert "error: GitHub API " in str(exc.value)
 
@@ -60,7 +61,7 @@ async def test_network_error(monkeypatch):
     request = httpx.Request("GET", "https://api.github.com/users/user/gists")
     exception = httpx.RequestError("Network issue", request=request) 
     monkeypatch.setattr(httpx,"AsyncClient",lambda *args, **kwargs: MockClient(exception=exception))
-    with pytest.raises(RuntimeError) as exc:
+    with pytest.raises(HTTPException) as exc:
         await get_gituser_gist("user")
     assert "Network error" in str(exc.value)
 
@@ -70,5 +71,5 @@ async def test_network_error(monkeypatch):
 async def test_unexpected_error(monkeypatch):
     exception = ValueError("Boom")
     monkeypatch.setattr(httpx,"AsyncClient",lambda *args, **kwargs: MockClient(exception=exception))
-    with pytest.raises(RuntimeError):
+    with pytest.raises(HTTPException):
         await get_gituser_gist("user")
