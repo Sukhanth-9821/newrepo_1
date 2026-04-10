@@ -53,6 +53,8 @@ async def test_user_not_found(monkeypatch):
     monkeypatch.setattr(httpx,"AsyncClient",lambda *args, **kwargs: MockClient(exception=exception))
     with pytest.raises(HTTPException) as exc:
         await get_gituser_gist("wronguser")
+        
+    assert exc.value.status_code == 404
     assert "error: GitHub API " in str(exc.value)
 
 # NETWORK ERROR
