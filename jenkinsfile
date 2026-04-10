@@ -13,7 +13,7 @@ pipeline{
                 python3 -m venv venv
                 . venv/bin/activate
                 pip install --upgrade pip
-                ls
+                ls -R venv
                 pip install -r requirements.txt
                 '''
             }
@@ -22,6 +22,13 @@ pipeline{
             steps{
                 sh '''
                 venv/bin/python -m pytest
+                '''
+            }
+        }
+        stage("sonarqube Analysis"){
+            steps{
+                '''
+
                 '''
             }
         }
